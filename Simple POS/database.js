@@ -1,5 +1,5 @@
 const Database = require('better-sqlite3');
-const db = new Database('pos.db');
+const db = new Database('/data/pos.db');
 
 db.pragma('journal_mode = WAL');
 
