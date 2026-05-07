@@ -1,0 +1,75 @@
+<%- include('layout', { body: `
+  <h2>New Rental</h2>
+  <form action="/rentals/create" method="POST">
+    <div><label>Customer</label><input type="text" name="customer_name" placeholder="Walk-in"></div>
+    <div id="rentalItems">
+      <div class="rental-item">
+        <label>Product</label>
+        <select name="product_ids" required>
+          <% products.forEach(p => { %>
+            <option value="<%= p.id %>"><%= p.name %> (Stock: <%= p.stock %>) - $<%= p.rental_price %>/day</option>
+          <% }) %>
+        </select>
+        <label>Qty</label>
+        <input type="number" name="quantities" value="1" min="1" required>
+        <label>Days</label>
+        <input type="number" name="days" value="1" min="1" required>
+      </div>
+    </div>
+    <button type="button" onclick="addRentalItem()">+ Add Another Item</button><br><br>
+    <button type="submit" class="btn-success">Create Rental</button>
+  </form>
+
+  <h3>All Rentals</h3>
+  <table>
+    <tr><th>Invoice #</th><th>Customer</th><th>Start Date</th><th>End Date</th><th>Status</th><th>Total</th><th>Paid</th><th>Action</th></tr>
+    <% rentals.forEach(r => { %>
+      <tr>
+        <td><%= r.invoice_number %></td>
+        <td><%= r.customer_name %></td>
+        <td><%= r.start_date %></td>
+        <td><%= r.end_date || '—' %></td>
+        <td><%= r.status %></td>
+        <td>$<%= r.total.toFixed(2) %></td>
+        <td><%= r.paid ? 'Yes' : 'No' %></td>
+        <td>
+          <% if (r.status === 'active') { %>
+            <form action="/rentals/return/<%= r.id %>" method="POST" style="display:inline">
+              <button type="submit" class="btn-danger">Return</button>
+            </form>
+          <% } %>
+          <a href="/invoice/rental/<%= r.id %>" class="btn">Invoice</a>
+          <% if (!r.paid && r.status !== 'active') { %>
+            <form action="/invoice/rental/<%= r.id %>/pay" method="POST" style="display:inline">
+              <button type="submit" class="btn-success">Mark Paid</button>
+            </form>
+          <% } else if (r.paid) { %>
+            <a href="/receipt/rental/<%= r.id %>" class="btn">Receipt</a>
+          <% } %>
+        </td>
+      </tr>
+    <% }) %>
+  </table>
+
+  <script>
+    function addRentalItem() {
+      const container = document.getElementById('rentalItems');
+      const div = document.createElement('div');
+      div.className = 'rental-item';
+      div.innerHTML = \`
+        <label>Product</label>
+        <select name="product_ids" required>
+          <% products.forEach(p => { %>
+            <option value="<%= p.id %>"><%= p.name %> (Stock: <%= p.stock %>) - $<%= p.rental_price %>/day</option>
+          <% }) %>
+        </select>
+        <label>Qty</label>
+        <input type="number" name="quantities" value="1" min="1" required>
+        <label>Days</label>
+        <input type="number" name="days" value="1" min="1" required>
+        <button type="button" onclick="this.parentElement.remove()">Remove</button>
+      \`;
+      container.appendChild(div);
+    }
+  </script>
+` }) %>

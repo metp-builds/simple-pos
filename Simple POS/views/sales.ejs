@@ -1,0 +1,63 @@
+<%- include('layout', { body: `
+  <h2>New Sale</h2>
+  <form action="/sales/create" method="POST">
+    <div id="saleItems">
+      <div class="sale-item">
+        <label>Product</label>
+        <select name="product_ids" required>
+          <% products.forEach(p => { %>
+            <option value="<%= p.id %>"><%= p.name %> (Stock: <%= p.stock %>) - $<%= p.sale_price %></option>
+          <% }) %>
+        </select>
+        <label>Qty</label>
+        <input type="number" name="quantities" value="1" min="1" required>
+      </div>
+    </div>
+    <button type="button" onclick="addSaleItem()">+ Add Another Item</button><br><br>
+    <button type="submit" class="btn-success">Complete Sale</button>
+  </form>
+
+  <h3>Recent Sales</h3>
+  <table>
+    <tr><th>Invoice #</th><th>Date</th><th>Total</th><th>Items</th><th>Paid</th><th>Action</th></tr>
+    <% sales.forEach(s => { %>
+      <tr>
+        <td><%= s.invoice_number %></td>
+        <td><%= new Date(s.sale_date).toLocaleString() %></td>
+        <td>$<%= s.total.toFixed(2) %></td>
+        <td><%= s.item_count %></td>
+        <td><%= s.paid ? 'Yes' : 'No' %></td>
+        <td>
+          <a href="/invoice/sale/<%= s.id %>" class="btn">View Invoice</a>
+          <% if (!s.paid) { %>
+            <form action="/invoice/sale/<%= s.id %>/pay" method="POST" style="display:inline">
+              <button type="submit" class="btn-success">Mark Paid</button>
+            </form>
+          <% } else { %>
+            <a href="/receipt/sale/<%= s.id %>" class="btn">Receipt</a>
+          <% } %>
+        </td>
+      </tr>
+    <% }) %>
+  </table>
+
+  <script>
+    function addSaleItem() {
+      const container = document.getElementById('saleItems');
+      const div = document.createElement('div');
+      div.className = 'sale-item';
+      div.innerHTML = \`
+        <label>Product</label>
+        <select name="product_ids" required>
+          <% products.forEach(p => { %>
+            <option value="<%= p.id %>"><%= p.name %> (Stock: <%= p.stock %>) - $<%= p.sale_price %></option>
+          <% }) %>
+        </select>
+        <label>Qty</label>
+        <input type="number" name="quantities" value="1" min="1" required>
+        <button type="button" onclick="this.parentElement.remove()">Remove</button>
+      \`;
+      container.appendChild(div);
+    }
+  </script>
+` }) %>

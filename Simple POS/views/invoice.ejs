@@ -1,0 +1,33 @@
+<%- include('layout', { body: `
+  <h2>Invoice</h2>
+  <p><strong>Invoice #:</strong> <%= invoice.invoice_number %></p>
+  <p><strong>Date:</strong> <%= invoice.sale_date || invoice.start_date %></p>
+  <% if (type === 'rental') { %>
+    <p><strong>Customer:</strong> <%= invoice.customer_name %></p>
+    <p><strong>Start Date:</strong> <%= invoice.start_date %> | <strong>End Date:</strong> <%= invoice.end_date || 'Not returned' %></p>
+  <% } %>
+  <table>
+    <tr><th>Product</th><th>Description</th><th>Quantity</th><th>Unit Price</th><th>Total</th></tr>
+    <% let grandTotal = 0; items.forEach(item => { 
+      let lineTotal = item.quantity * (type==='sale' ? item.price : item.rental_price_per_day * item.days);
+      grandTotal += lineTotal;
+    %>
+      <tr>
+        <td><%= item.name %></td>
+        <td><%= item.description %></td>
+        <td><%= item.quantity %></td>
+        <td>$<%= (type==='sale' ? item.price : item.rental_price_per_day).toFixed(2) %><% if (type==='rental') { %>/day x <%= item.days %> days<% } %></td>
+        <td>$<%= lineTotal.toFixed(2) %></td>
+      </tr>
+    <% }) %>
+    <tr><td colspan="4" style="text-align:right"><strong>Grand Total</strong></td><td><strong>$<%= grandTotal.toFixed(2) %></strong></td></tr>
+  </table>
+  <p><strong>Status:</strong> <%= invoice.paid ? 'Paid' : 'Unpaid' %></p>
+  <% if (!invoice.paid) { %>
+    <form action="/invoice/<%= type %>/<%= invoice.id %>/pay" method="POST">
+      <button type="submit" class="btn-success">Mark as Paid & Generate Receipt</button>
+    </form>
+  <% } else { %>
+    <a href="/receipt/<%= type %>/<%= invoice.id %>" class="btn">View Receipt</a>
+  <% } %>
+` }) %>

@@ -1,0 +1,18 @@
+<%- include('layout', { body: `
+  <h2>All Invoices</h2>
+  <table>
+    <tr><th>Invoice #</th><th>Type</th><th>Date</th><th>Total</th><th>Paid</th><th>Action</th></tr>
+    <% invoices.forEach(inv => { %>
+      <tr>
+        <td><%= inv.invoice_number %></td>
+        <td><%= inv.type.charAt(0).toUpperCase() + inv.type.slice(1) %></td>
+        <td><%= new Date(inv.date).toLocaleString() %></td>
+        <td>$<%= inv.total.toFixed(2) %></td>
+        <td><%= inv.paid ? 'Yes' : 'No' %></td>
+        <td>
+          <a href="/invoice/<%= inv.type %>/<%= inv.id %>" class="btn">View</a>
+        </td>
+      </tr>
+    <% }) %>
+  </table>
+` }) %>

@@ -1,0 +1,60 @@
+<%- include('layout', { body: `
+  <h2>Product Inventory</h2>
+
+  <h3>Add Product</h3>
+  <form action="/inventory/add" method="POST">
+    <div><label>Name</label><input type="text" name="name" required></div>
+    <div><label>Description</label><input type="text" name="description"></div>
+    <div><label>Sale Price</label><input type="number" step="0.01" name="sale_price" required></div>
+    <div><label>Rental Price/day</label><input type="number" step="0.01" name="rental_price" value="0"></div>
+    <div><label>Stock</label><input type="number" name="stock" value="0"></div>
+    <button type="submit">Add Product</button>
+  </form>
+
+  <h3>Current Inventory</h3>
+  <table>
+    <tr><th>ID</th><th>Name</th><th>Description</th><th>Sale Price</th><th>Rent/Day</th><th>Stock</th><th>Actions</th></tr>
+    <% products.forEach(p => { %>
+      <tr>
+        <td><%= p.id %></td>
+        <td><%= p.name %></td>
+        <td><%= p.description %></td>
+        <td><%= p.sale_price %></td>
+        <td><%= p.rental_price %></td>
+        <td><%= p.stock %></td>
+        <td>
+          <button onclick="editProduct(<%= p.id %>, '<%= p.name %>', '<%= p.description %>', <%= p.sale_price %>, <%= p.rental_price %>, <%= p.stock %>)">Edit</button>
+          <form action="/inventory/delete/<%= p.id %>" method="POST" style="display:inline">
+            <button type="submit" class="btn-danger">Delete</button>
+          </form>
+        </td>
+      </tr>
+    <% }) %>
+  </table>
+
+  <div id="editForm" style="display:none; border:1px solid #aaa; padding:10px; margin-top:10px;">
+    <h3>Edit Product</h3>
+    <form id="editProductForm" method="POST">
+      <input type="hidden" name="id" id="editId">
+      <div><label>Name</label><input type="text" name="name" id="editName" required></div>
+      <div><label>Description</label><input type="text" name="description" id="editDesc"></div>
+      <div><label>Sale Price</label><input type="number" step="0.01" name="sale_price" id="editSalePrice" required></div>
+      <div><label>Rental Price/day</label><input type="number" step="0.01" name="rental_price" id="editRentalPrice"></div>
+      <div><label>Stock</label><input type="number" name="stock" id="editStock"></div>
+      <button type="submit" class="btn-success">Save Changes</button>
+      <button type="button" onclick="document.getElementById('editForm').style.display='none'">Cancel</button>
+    </form>
+  </div>
+
+  <script>
+    function editProduct(id, name, desc, sale, rental, stock) {
+      document.getElementById('editForm').style.display = 'block';
+      document.getElementById('editProductForm').action = '/inventory/edit/' + id;
+      document.getElementById('editName').value = name;
+      document.getElementById('editDesc').value = desc;
+      document.getElementById('editSalePrice').value = sale;
+      document.getElementById('editRentalPrice').value = rental;
+      document.getElementById('editStock').value = stock;
+    }
+  </script>
+` }) %>

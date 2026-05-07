@@ -1,0 +1,23 @@
+<%- include('layout', { body: `
+  <h2>Receipt</h2>
+  <p><strong>Receipt for Invoice #:</strong> <%= invoice.invoice_number %></p>
+  <p><strong>Date Paid:</strong> (paid)</p>
+  <% if (type === 'rental') { %><p><strong>Customer:</strong> <%= invoice.customer_name %></p><% } %>
+  <table>
+    <tr><th>Product</th><th>Description</th><th>Qty</th><th>Unit Price</th><th>Line Total</th></tr>
+    <% let total = 0; items.forEach(item => {
+      let line = item.quantity * (type==='sale' ? item.price : item.rental_price_per_day * item.days);
+      total += line;
+    %>
+      <tr>
+        <td><%= item.name %></td>
+        <td><%= item.description %></td>
+        <td><%= item.quantity %></td>
+        <td>$<%= (type==='sale' ? item.price : item.rental_price_per_day).toFixed(2) %><% if (type==='rental') { %>/day x <%= item.days %> days<% } %></td>
+        <td>$<%= line.toFixed(2) %></td>
+      </tr>
+    <% }) %>
+    <tr><td colspan="4" style="text-align:right"><strong>Total Paid</strong></td><td><strong>$<%= total.toFixed(2) %></strong></td></tr>
+  </table>
+  <p><em>Thank you for your payment!</em></p>
+` }) %>

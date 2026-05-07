@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Simple POS</title>
+  <style>
+    body { font-family: sans-serif; margin: 20px; }
+    nav a { margin-right: 15px; text-decoration: none; color: blue; }
+    table { border-collapse: collapse; width: 100%; margin-bottom: 20px; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+    th { background: #f4f4f4; }
+    form div { margin-bottom: 10px; }
+    label { display: inline-block; width: 100px; }
+    button, .btn { padding: 6px 12px; margin: 2px; }
+    .btn { display: inline-block; background: #007bff; color: white; border: none; text-decoration: none; }
+    .btn-danger { background: #dc3545; }
+    .btn-success { background: #28a745; }
+  </style>
+</head>
+<body>
+  <h1>Simple POS System</h1>
+  <nav>
+    <a href="/inventory">Inventory</a>
+    <a href="/sales">Sales</a>
+    <a href="/rentals">Rentals</a>
+    <a href="/invoices">All Invoices</a>
+  </nav>
+  <hr>
+  <%- body %>
+</body>
+</html>
